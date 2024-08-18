@@ -5,10 +5,11 @@ const authStoreVender = require('../middlewares/authStoreVender.js');
 const storeRouter = express.Router();
 
 
+storeRouter.use(express.json());
 
 storeRouter.get('/', getAllStores)
-storeRouter.get('/:authorId', getStoreById)
+storeRouter.get('/:storeId', getStoreById)
 storeRouter.post('/', addStore, authAdmin)
-storeRouter.patch('/:authorId', updateStoreById, authAdmin, authStoreVender)
-storeRouter.delete('/:authorId', deleteStoreById, authAdmin, authStoreVender)
+storeRouter.patch('/:storeId', updateStoreById, authAdmin, authStoreVender)
+storeRouter.delete('/:storeId', deleteStoreById, authAdmin, authStoreVender)
 module.exports = storeRouter

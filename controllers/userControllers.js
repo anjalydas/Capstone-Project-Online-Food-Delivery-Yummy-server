@@ -1,5 +1,6 @@
 const User = require("../model/userModel.js");
 const bcrypt = require('bcrypt');
+const generateUserToken = require("../utils/generateToken.js");
 const getAllUsers = async(req, res, next) => {
   try {
     const users = await User.find(req.query);
@@ -31,8 +32,9 @@ catch (error) {
     }
     const addUser = async(req, res, next) => {
     try{
-        const { name, email, password, mobile, profilePic, courses } = req.body;
-        if (!name || !email || !password || !mobile) {
+      const userData = req.body;
+        const { name, email, userId, password, mobile, profilePic, role } = req.body;
+        if (!name || !email || !userId || !password || !mobile) {
             return res.status(400).json({ success: false, message: "all fields required" });
         }
         const userExist = await User.findOne({ email });
@@ -42,7 +44,7 @@ catch (error) {
         }
         const saltRounds =10;
         const hashedPassword = bcrypt.hashSync(password, saltRounds);
-        const users = new User({ name, email, password: hashedPassword, mobile, profilePic, courses });
+        const users = new User({ name, email,userId, password: hashedPassword, mobile, profilePic, role });
         await users.save()
         const token = generateUserToken(email);
 
@@ -51,6 +53,7 @@ catch (error) {
       }
         catch (error) {
           res.status(400).send('Error Adding User');
+          console.log(error)
         }
       }  
       const userLogin = async (req, res, next) => {
@@ -107,29 +110,29 @@ catch (error) {
             const user = req.user;
     
             if (!user) {
-                return res.status(400).json({ success: true, message: "User not authenticated" });
+                return res.status(401).json({ success: false, message: "User not authenticated" });
             }
             res.json({ success: true, message: "User authenticated" });
         } catch (error) {
             res.status(error.status || 500).json({ message: error.message || "Internal server error" });
         }
     };
-      const updateAUserById =async (req, res) => {
+      const updateAUserById =async (req, res, next) => {
        try{
         const userId = req.params.id;
-        const { name, email, mobile, profilePic, courses } = req.body;
-        const updateUser = await User.findByIdAndUpdate(userId, { name, email, mobile, profilePic, courses }, {new:true})
+        const { name, email, mobile, profilePic, role } = req.body;
+        const updateUser = await User.findByIdAndUpdate(userId, { name, email, mobile, profilePic, role }, {new:true})
         if (!updateUser) {
           return res.status(404).json({ success: false, message: "User not found" });
       }
-        res.json({ success: true, user: updatedUser })
+        res.json({ success: true, user: updateUser })
        }
        catch{
         if (error.kind === 'ObjectId') {
           return res.status(400).json({ success: false, message: "Invalid user ID" });
       }
-        res.status(404).send("User not Found")
-       }
+      res.status(500).json({ success: false, message: "An error occurred while updating the user" });
+    }
       }
       const deleteAUserById = (req, res) => {
         res.send('delete a User by id')

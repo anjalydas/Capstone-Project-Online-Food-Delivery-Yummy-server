@@ -32,11 +32,11 @@ const getStoreById = async (req, res, next) => {
 
 const addStore = async (req, res, next) => {
     try {
-        const { name, address, contactNumber } = req.body;
-        if (!name || !address || !contactNumber) {
+        const { storeName, address, contactNumber } = req.body;
+        if (!storeName || !address || !contactNumber) {
             return res.status(400).json({ success: false, message: "All fields are required" });
         }
-        const newStore = new Store({ name, address, contactNumber });
+        const newStore = new Store({ storeName, address, contactNumber });
         await newStore.save();
         res.json({ success: true, message: "Store created successfully", store: newStore });
     } catch (error) {

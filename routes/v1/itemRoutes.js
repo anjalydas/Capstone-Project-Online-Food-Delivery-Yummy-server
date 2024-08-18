@@ -5,10 +5,11 @@ const authStoreVender = require('../middlewares/authStoreVender');
 const itemRouter = express.Router();
 
 
+itemRouter.use(express.json());
 
 itemRouter.get('/', getAllFoodItems)
-itemRouter.get('/:itemId', getFoodItemById)
+itemRouter.get('/:foodItemId', getFoodItemById)
 itemRouter.post('/', addFoodItem, authAdmin, authStoreVender)
-itemRouter.patch('/:itemId', updateFoodItemById, authAdmin, authStoreVender)
-itemRouter.delete('/:itemId', deleteFoodItemById, authAdmin, authStoreVender)
+itemRouter.patch('/:foodItemId', updateFoodItemById, authAdmin, authStoreVender)
+itemRouter.delete('/:foodItemId', deleteFoodItemById, authAdmin, authStoreVender)
 module.exports = itemRouter

@@ -1,13 +1,14 @@
 const mongoose = require('mongoose');
 const cartSchema = new mongoose.Schema
     ({   userId: {
-        type: String,
+        type: mongoose.ObjectId,
+            ref: 'User',
         required: true,
     },
-    dishes: 
+    foodItemId: 
         {
             type: mongoose.ObjectId,
-            ref: 'Dish'
+            ref: 'Item'
         },
 
     TotalPrice: {

@@ -1,13 +1,12 @@
 const mongoose = require('mongoose');
 const storeSchema = new mongoose.Schema
     ({ storeName: String,
+        address:String,
+        contactNumber: String,
         image: String,
         rating: Number,
         description: String,
-        dish: {
-            type: mongoose.ObjectId,
-            ref: 'Item'
-        },
+        dish: Array
         
     });
    

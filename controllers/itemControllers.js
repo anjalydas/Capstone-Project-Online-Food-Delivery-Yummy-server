@@ -33,11 +33,12 @@ const getFoodItemById = async (req, res, next) => {
 
 const addFoodItem = async (req, res, next) => {
     try {
-        const { name, price, description, category, storeId } = req.body;
-        if (!name || !price || !description || !category || !storeId) {
+        
+        const { dishName, price, description, category, storeName } = req.body;
+        if (!dishName || !price || !description || !category || !storeName) {
             return res.status(400).json({ success: false, message: "All fields are required" });
         }
-        const newFoodItem = new FoodItem({ name, price, description, category, storeId });
+        const newFoodItem = new FoodItem({ dishName, price, description, category, storeName });
         await newFoodItem.save();
         res.json({ success: true, message: "Food item created successfully", foodItem: newFoodItem });
     } catch (error) {
@@ -48,8 +49,8 @@ const addFoodItem = async (req, res, next) => {
 
 const updateFoodItemById = async (req, res, next) => {
     try {
-        const { name, price, description, category } = req.body;
-        const updatedFoodItem = await FoodItem.findByIdAndUpdate(req.params.foodItemId, { name, price, description, category }, { new: true, runValidators: true });
+        const { dishName, price, description, category } = req.body;
+        const updatedFoodItem = await FoodItem.findByIdAndUpdate(req.params.foodItemId, { dishName, price, description, category }, { new: true, runValidators: true });
         if (!updatedFoodItem) {
             return res.status(404).json({ success: false, message: "Food item not found" });
         }

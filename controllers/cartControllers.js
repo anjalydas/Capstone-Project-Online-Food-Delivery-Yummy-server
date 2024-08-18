@@ -3,7 +3,7 @@ const Cart = require("../model/cartModel.js");
 
 const getAllCartItems = async (req, res, next) => {
     try {
-        const cartItems = await Cart.find({ userId: req.user._id }).populate('foodItems');
+        const cartItems = await Cart.find({ userId: req.user.id }).populate('foodItems');
         if (cartItems.length === 0) {
             return res.status(404).json({ success: false, message: "Cart is empty" });
         }
@@ -16,8 +16,9 @@ const getAllCartItems = async (req, res, next) => {
 
 const addItemToCart = async (req, res, next) => {
     try {
-        const { foodItemId, quantity } = req.body;
-        if (!foodItemId || !quantity) {
+        console.log(req.user);
+        const { foodItem, quantity } = req.body;
+        if (!foodItem || !quantity) {
             return res.status(400).json({ success: false, message: "Food item and quantity are required" });
         }
 
@@ -26,11 +27,11 @@ const addItemToCart = async (req, res, next) => {
             cart = new Cart({ userId: req.user._id, foodItems: [] });
         }
 
-        const existingItem = cart.foodItems.find(item => item.foodItemId.toString() === foodItemId);
+        const existingItem = cart.foodItemId.find(item => item.foodItem.toString() === foodItem);
         if (existingItem) {
             existingItem.quantity += quantity;
         } else {
-            cart.foodItems.push({ foodItemId, quantity });
+            cart.foodItemId.push({ foodItem, quantity });
         }
 
         await cart.save();
@@ -42,9 +43,9 @@ const addItemToCart = async (req, res, next) => {
 
 const updateCartItemQuantity = async (req, res, next) => {
   try {
-      const { foodItemId, quantity } = req.body;
-      if (!foodItemId || !quantity) {
-          return res.status(400).json({ success: false, message: "Food item and quantity are required" });
+      const { dishNameId, quantity } = req.body;
+      if (!dishNameId || !quantity) {
+          return res.status(400).json({ success: false, message: "item and quantity are required" });
       }
 
       const cart = await Cart.findOne({ userId: req.user._id });
@@ -73,7 +74,7 @@ const removeCartItem = async (req, res, next) => {
           return res.status(400).json({ success: false, message: "Food item ID is required" });
       }
 
-      const cart = await Cart.findOne({ userId: req.user._id });
+      const cart = await Cart.findOne({ userId: req.user.id });
       if (!cart) {
           return res.status(404).json({ success: false, message: "Cart not found" });
       }

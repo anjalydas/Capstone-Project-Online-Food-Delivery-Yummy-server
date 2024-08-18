@@ -9,7 +9,10 @@ const foodItemSchema = new mongoose.Schema
         price: Number,
         rating: Number,
         description: String,
-        
+        category: {
+            type: String,
+            enum: ["veg", "non-veg"],
+        },
     });
    
 

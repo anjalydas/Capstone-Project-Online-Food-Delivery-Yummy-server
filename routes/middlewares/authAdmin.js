@@ -9,18 +9,16 @@ const authAdmin = (req, res, next) => {
 
         const tokenVerified = jwt.verify(token, process.env.JWT_SECRET_KEY);
 
-        if (!tokenVerified) {
-            return res.status(400).json({ success: false, message: "user not authenticated" });
-        }
-
         if (tokenVerified.role !== "admin") {
-            return res.status(400).json({ message: "user not authenticated" });
+            return res.status(403).json({ success: false, message: "Access denied. Admins only" });
         }
-
+        res.json({ success: true, message: "Admin authenticated", user });
         req.user = tokenVerified;
         next();
     } catch (error) {
-        console.log(error);
+        console.error("Authentication error:", error);
+        return res.status(500).json({ success: false, message: "Internal server error" });
+    
     }
 };
 module.exports = authAdmin;

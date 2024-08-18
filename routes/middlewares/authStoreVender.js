@@ -14,10 +14,10 @@ const authStoreVender = (req, res, next) => {
             return res.status(400).json({ success: false, message: "Vender not authenticated" });
         }
 
-        if (tokenVerified.role !== "vender" && tokenVerified.role !== "admin") {
-            return res.status(400).json({ message: "user not authenticated not Vender or admin" });
+        if (tokenVerified.role !== "vender" ) {
+            return res.status(400).json({ message: "user not authenticated not Vender" });
         }
-
+        res.json({ success: true, message: "Vender authenticated", user });
         req.user = tokenVerified;
         next();
     } catch (error) {
