@@ -7,9 +7,7 @@ const authStoreVender = require('../middlewares/authStoreVender.js');
 const userRouter = express.Router();
 
 
-userRouter.use(authAdmin)
-userRouter.use(authStoreVender)
-userRouter.use(authUser)
+
 userRouter.get('/', getAllUsers)
 userRouter.get('/:id', getAUserById)
 userRouter.post('/create', addUser)
