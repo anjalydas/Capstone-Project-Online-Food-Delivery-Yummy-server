@@ -66,25 +66,30 @@ const updateCartItemQuantity = async (req, res, next) => {
 };
 
 const removeCartItem = async (req, res, next) => {
-  try {
-      const { Item } = req.body;
-      if (!Item) {
-          return res.status(400).json({ success: false, message: "Food item ID is required" });
-      }
-
-      const cart = await Cart.findOne({ userId: req.user.id });
-      if (!cart) {
-          return res.status(404).json({ success: false, message: "Cart not found" });
-      }
-
-      cart.foodItems = cart.foodItems.filter(item => item.foodItemId.toString() !== foodItemId);
-
-      await cart.save();
-      res.json({ success: true, message: "Item removed from cart", cart });
-  } catch (error) {
-      res.status(500).json({ message: error.message || "Error removing item from cart" });
-  }
-};
+    try {
+        const { dishName } = req.body;
+        if (!dishName) {
+            return res.status(400).json({ success: false, message: "Dish name is required" });
+        }
+  
+        const cart = await Cart.findOne({ dishName });
+        if (!cart) {
+            return res.status(404).json({ success: false, message: "Cart not found" });
+        }
+ 
+        if (!cart.items) {
+            cart.items = [];
+        }
+  
+        cart.items = cart.items.filter(item => item.dishName !== dishName);
+  
+        await cart.save();
+        res.json({ success: true, message: "Item removed from cart", cart });
+    } catch (error) {
+        res.status(500).json({ message: error.message || "Error removing item from cart" });
+    }
+  };
+  
 
 module.exports = {
   getAllCartItems,
