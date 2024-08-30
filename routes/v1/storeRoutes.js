@@ -7,9 +7,9 @@ const storeRouter = express.Router();
 
 storeRouter.use(express.json());
 
-storeRouter.get('/', getAllStores)
-storeRouter.get('/:storeId', getStoreById)
-storeRouter.post('/', addStore, authAdmin)
-storeRouter.patch('/:storeId', updateStoreById, authAdmin, authStoreVender)
-storeRouter.delete('/:storeId', deleteStoreById, authAdmin, authStoreVender)
+storeRouter.get('/store', getAllStores)
+storeRouter.get('/store/:storeId', getStoreById)
+storeRouter.post('/store', addStore, authAdmin)
+storeRouter.patch('/store/:storeId', updateStoreById, authAdmin, authStoreVender)
+storeRouter.delete('/store/:storeId', deleteStoreById, authAdmin, authStoreVender)
 module.exports = storeRouter
