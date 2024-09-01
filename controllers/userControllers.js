@@ -34,7 +34,7 @@ catch (error) {
     try{
       const userData = req.body;
         const { name, email, userId, password, mobile, profilePic, role } = req.body;
-        if (!name || !email || !userId || !password || !mobile) {
+        if (!name || !email || !role || !password || !mobile) {
             return res.status(400).json({ success: false, message: "all fields required" });
         }
         const userExist = await User.findOne({ email });

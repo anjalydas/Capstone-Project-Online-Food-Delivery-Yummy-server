@@ -32,11 +32,11 @@ const getStoreById = async (req, res, next) => {
 
 const addStore = async (req, res, next) => {
     try {
-        const { storeName, address, contactNumber } = req.body;
+        const { storeName, image, address, contactNumber } = req.body;
         if (!storeName || !address || !contactNumber) {
             return res.status(400).json({ success: false, message: "All fields are required" });
         }
-        const newStore = new Store({ storeName, address, contactNumber });
+        const newStore = new Store({ storeName, image, address, contactNumber });
         await newStore.save();
         res.json({ success: true, message: "Store created successfully", store: newStore });
     } catch (error) {
@@ -47,8 +47,8 @@ const addStore = async (req, res, next) => {
 
 const updateStoreById = async (req, res, next) => {
     try {
-        const { name, address, contactNumber } = req.body;
-        const updatedStore = await Store.findByIdAndUpdate(req.params.storeId, { name, address, contactNumber }, { new: true, runValidators: true });
+        const { name, image, address, contactNumber } = req.body;
+        const updatedStore = await Store.findByIdAndUpdate(req.params.storeId, { name, image, address, contactNumber }, { new: true, runValidators: true });
         if (!updatedStore) {
             return res.status(404).json({ success: false, message: "Store not found" });
         }
