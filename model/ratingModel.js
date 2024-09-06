@@ -3,6 +3,7 @@ import mongoose from "mongoose";
 const ratingSchema = new mongoose.Schema({
     userId: {
         type: mongoose.Types.ObjectId,
+        required: true,
         ref: "User",
     },
     rating:{

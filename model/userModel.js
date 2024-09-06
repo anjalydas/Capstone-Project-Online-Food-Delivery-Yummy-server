@@ -16,13 +16,10 @@ const userSchema = new mongoose.Schema
         type: String,
         required: true,
     },
-        userId: {
-            type: String,
-            required: true,
-            unique: true,
-            minLength: 3,
-            maxLength: 10,
-        },
+    userId: {
+        type: String,
+        required: true
+    },
         password:  {
             type: String,
             required: true,
@@ -33,7 +30,7 @@ const userSchema = new mongoose.Schema
         },
         role: {
             type: String,
-            enum: ["customer", "vender", "admin"],
+            enum: ["customer", "vender"],
         },
     });
    

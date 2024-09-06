@@ -1,6 +1,7 @@
 const User = require("../model/userModel.js");
 const bcrypt = require('bcrypt');
 const generateUserToken = require("../utils/generateToken.js");
+
 const getAllUsers = async(req, res, next) => {
   try {
     const users = await User.find(req.query);
@@ -16,11 +17,11 @@ catch (error) {
 };
   const getAUserById = async(req, res, next) => {
         try{
-          const users = await User.findById(req.params.UserId).exec();
+          const users = await User.findById(req.params._id).exec();
           if (!users) {
             return res.status(404).json({ success: false, message: "User not found" });
         }
-        res.json({ success: true, user });
+        res.json({ success: true, users });
       }
         
        catch(error){
@@ -32,9 +33,9 @@ catch (error) {
     }
     const addUser = async(req, res, next) => {
     try{
-      const userData = req.body;
+      
         const { name, email, userId, password, mobile, profilePic, role } = req.body;
-        if (!name || !email || !role || !password || !mobile) {
+        if (!name || !email || !role || !password ) {
             return res.status(400).json({ success: false, message: "all fields required" });
         }
         const userExist = await User.findOne({ email });
@@ -44,7 +45,7 @@ catch (error) {
         }
         const saltRounds =10;
         const hashedPassword = bcrypt.hashSync(password, saltRounds);
-        const users = new User({ name, email,userId, password: hashedPassword, mobile, profilePic, role });
+        const users = new User({ name, email, userId, password: hashedPassword, mobile, profilePic, role });
         await users.save()
         const token = generateUserToken(email);
 
@@ -66,7 +67,7 @@ catch (error) {
             const userExist = await User.findOne({ email });
     
             if (!userExist) {
-                return res.status(404).json({ success: false, message: "User does not exist" });
+                return res.status(409).json({ success: false, message: "User does not exist" });
             }
     
             const passwordMatch = bcrypt.compareSync(password, userExist.password);
@@ -119,9 +120,9 @@ catch (error) {
     };
       const updateAUserById =async (req, res, next) => {
        try{
-        const userId = req.params.id;
+        const user = req.params._id;
         const { name, email, mobile, profilePic, role } = req.body;
-        const updateUser = await User.findByIdAndUpdate(userId, { name, email, mobile, profilePic, role }, {new:true})
+        const updateUser = await User.findByIdAndUpdate(user, { name, email, mobile, profilePic, role }, {new:true})
         if (!updateUser) {
           return res.status(404).json({ success: false, message: "User not found" });
       }

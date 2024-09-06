@@ -10,11 +10,11 @@ const userRouter = express.Router();
 
 userRouter.get('/', getAllUsers)
 userRouter.get('/:id', getAUserById)
-userRouter.post('/create', addUser)
-userRouter.post('/login', userLogin)
-userRouter.post('/logout', userLogout, authUser)
-userRouter.post('/profile/:id', userProfile, authUser)
-userRouter.get('/check-user/:id', checkUser)
+userRouter.post('/:sign-up', addUser)
+userRouter.post('/:login', userLogin)
+userRouter.post('/:logout', userLogout, authUser)
+userRouter.post('/:profile/:id', userProfile, authUser)
+userRouter.get('/:check-user/:id', checkUser)
 userRouter.patch('/:id', updateAUserById, authAdmin, authUser)
 userRouter.delete('/:id', deleteAUserById, authAdmin, authUser)
 module.exports = userRouter

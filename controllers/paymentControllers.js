@@ -6,13 +6,13 @@ const User = require("../model/userModel.js");
 
 const createPayment = async (req, res) => {
     try {
-        const { userId, cartId, paymentMethod, amount } = req.body;
+        const { email, cartId, paymentMethod, amount } = req.body;
 
-        if (!userId || !cartId || !paymentMethod || !amount) {
+        if (!email || !cartId || !paymentMethod || !amount) {
             return res.status(400).json({ success: false, message: "All fields are required" });
         }
 
-        const user = await User.findById(userId);
+        const user = await User.findById(email);
         const cart = await Cart.findById(cartId);
 
         if (!user) {
@@ -24,7 +24,7 @@ const createPayment = async (req, res) => {
         }
 
         const payment = new Payment({
-            userId,
+            email,
             cartId,
             paymentMethod,
             amount,
@@ -68,7 +68,7 @@ const getPaymentDetails = async (req, res) => {
     try {
         const { paymentId } = req.params;
 
-        const payment = await Payment.findById(paymentId).populate('userId', 'name email').populate('cartId');
+        const payment = await Payment.findById(paymentId).populate('email', 'name email').populate('cartId');
 
         if (!payment) {
             return res.status(404).json({ success: false, message: "Payment not found" });
