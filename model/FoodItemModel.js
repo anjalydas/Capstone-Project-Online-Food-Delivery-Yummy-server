@@ -2,9 +2,9 @@ const mongoose = require('mongoose');
 const foodItemSchema = new mongoose.Schema
     ({ dishName: String,
         image: String,
-        storeName: {
-            type: mongoose.ObjectId,
-            ref: 'Store'
+        storeName: {type: mongoose.Schema.Types.ObjectId,
+            ref: 'Store',
+            required: true
         },
         image: String,
         price: Number,

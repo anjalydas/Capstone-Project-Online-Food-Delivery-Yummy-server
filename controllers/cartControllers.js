@@ -19,30 +19,34 @@ const addItemToCart = async (req, res) => {
     try {
         const { name, dishName, quantity, totalPrice, shippingAddress } = req.body;
 
-        if (!name || !dishName || !quantity || !totalPrice || !shippingAddress) {
+        if ( !dishName || !quantity || !shippingAddress) {
             return res.status(400).json({ success: false, message: "All fields are required" });
         }
 
-        let cart = await Cart.findOne({ dishName });
+        let cart = await Cart.findOne({ 'foodItems.dishName': dishName });
 
         if (!cart) {
-            cart = new Cart({name, dishName, quantity, totalPrice, shippingAddress  });
+            cart = new Cart({
+              foodItems: [{ name, dishName, quantity, totalPrice, shippingAddress }],
+            });
         } else {
-            const existingItem = cart.foodItems.find(item => item.dishName.toString() === foodItem);
+            const existingItem = cart.foodItems.find(item => item.dishName === dishName);
 
             if (existingItem) {
                 existingItem.quantity += quantity;
+                existingItem.totalPrice += totalPrice; // Adjust totalPrice if needed
             } else {
-                cart.dishName.push({ dishName, quantity });
+                cart.foodItems.push({ name, dishName, quantity, totalPrice, shippingAddress });
             }
-            cart.totalPrice += totalPrice;
         }
+
         await cart.save();
         res.status(200).json({ success: true, message: "Item added to cart", cart });
     } catch (error) {
         res.status(500).json({ success: false, message: "Error adding item to cart", error: error.message });
     }
 };
+
 
 const updateCartItemQuantity = async (req, res, next) => {
   try {

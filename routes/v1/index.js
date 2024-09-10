@@ -9,7 +9,7 @@ const v1Router = express.Router();
 v1Router.use('/user', userRouter)
 v1Router.use('/item', itemRouter)
 v1Router.use('/store', storeRouter)
-v1Router.use('/cart', cartRouter)
+v1Router.use('/mycart', cartRouter)
 v1Router.use('/payment', paymentRouter)
 v1Router.get("/", (req, res) => {
     res.send("Hello World!");

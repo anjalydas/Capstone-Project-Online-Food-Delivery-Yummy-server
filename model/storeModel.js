@@ -1,12 +1,12 @@
 const mongoose = require('mongoose');
 const storeSchema = new mongoose.Schema
-    ({ storeName: String,
+    ({ storeName: { type: String, required: true },
         address:String,
         contactNumber: String,
         image: String,
         rating: Number,
         description: String,
-        dish: Array
+        dishName: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Item' }]
         
     });
    

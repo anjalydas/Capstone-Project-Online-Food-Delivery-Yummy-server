@@ -47,8 +47,8 @@ const addStore = async (req, res, next) => {
 
 const updateStoreById = async (req, res, next) => {
     try {
-        const { name, image, address, contactNumber } = req.body;
-        const updatedStore = await Store.findByIdAndUpdate(req.params.storeId, { name, image, address, contactNumber }, { new: true, runValidators: true });
+        const { storeName, image, address, contactNumber } = req.body;
+        const updatedStore = await Store.findByIdAndUpdate(req.params.storeId, { storeName, image, address, contactNumber }, { new: true, runValidators: true });
         if (!updatedStore) {
             return res.status(404).json({ success: false, message: "Store not found" });
         }
