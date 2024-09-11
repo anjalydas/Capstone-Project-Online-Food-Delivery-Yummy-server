@@ -10,8 +10,11 @@ const port = process.env.PORT ||3000;
 connectDB();
 
 const corsOptions = {
-  origin: 'http://localhost:5173',  
-  credentials: true,                
+  origin: [
+    'http://localhost:5173', // for local development
+    'https://capstone-project-online-food-delivery-yummy-client.vercel.app' // for production
+  ],
+  optionsSuccessStatus: 200,
 };
 app.use(cors(corsOptions));
 app.use(express.json())
