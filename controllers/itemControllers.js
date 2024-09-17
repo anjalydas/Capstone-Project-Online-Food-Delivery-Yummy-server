@@ -32,27 +32,16 @@ const getFoodItemById = async (req, res, next) => {
 };
 
 const getFoodItemsByStore = async (req, res) => {
+    const { storeId } = req.query; // Extract storeId from query parameters
+    
     try {
-        const { store } = req.query; // Extract storeId from query parameters
-        
-        // Validate storeId
-        if (!store) {
-            return res.status(400).json({ success: false, message: "Store ID is required" });
-        }
-
-        // Find food items by storeId
-        const foodItems = await FoodItem.find({ storeName: store }).populate('storeName', 'storeName');
-
+        const foodItems = await FoodItem.find({ storeId }); // Filter by storeId
         if (foodItems.length === 0) {
-            return res.status(404).json({ success: false, message: "No food items found for this store" });
+            return res.status(404).json({ message: 'No food items found for this store' });
         }
-
-        res.json({ success: true, foodItems });
-    } catch (error) {
-        if (error.kind === 'ObjectId') {
-            return res.status(400).json({ success: false, message: "Invalid store ID" });
-        }
-        res.status(500).json({ success: false, message: error.message || "Internal server error" });
+        res.json({ foodItems });
+    } catch (err) {
+        res.status(500).json({ message: 'Error fetching food items', error: err });
     }
 };
 
@@ -106,19 +95,29 @@ const deleteFoodItemById = async (req, res, next) => {
 };
 const searchByItem = async (req, res) => {
     try {
-        const query = req.query.query;
-    
-        if (!query || typeof query !== 'string') {
-          return res.status(400).json({ message: 'Invalid query parameter' });
-        }
-    
-        const results = await ItemModel.find({ dishName: new RegExp(query, 'i') });
-        res.json({ foodItems: results });
-      } catch (error) {
-        console.error('Error:', error);
-        res.status(500).json({ message: 'Server error', error });
+      const query = req.query.query;  // Extract the query parameter
+  
+      // Validate the query parameter
+      if (!query || typeof query !== 'string') {
+        return res.status(400).json({ success: false, message: 'Invalid query parameter' });
       }
+  
+      // Perform search using a regular expression for case-insensitive matching
+      const results = await FoodItem.find({ dishName: new RegExp(query, 'i') });
+  
+      // If no items found
+      if (results.length === 0) {
+        return res.status(404).json({ success: false, message: 'No food items found' });
+      }
+  
+      // Return search results
+      res.json({ success: true, foodItems: results });
+    } catch (error) {
+      console.error('Error:', error);
+      res.status(500).json({ success: false, message: 'Server error', error });
+    }
   };
+  
   
 
 module.exports = { getAllFoodItems, getFoodItemById, addFoodItem, updateFoodItemById, deleteFoodItemById, getFoodItemsByStore, searchByItem };

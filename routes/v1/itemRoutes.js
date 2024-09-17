@@ -7,10 +7,10 @@ const itemRouter = express.Router();
 
 
 itemRouter.use(express.json());
-
+itemRouter.get('/search', searchByItem)
 itemRouter.get('/', getAllFoodItems)
 itemRouter.get('/:foodItemId', getFoodItemById)
-itemRouter.get('/:search', searchByItem)
+itemRouter.get('/item?storeName=storeId', getFoodItemsByStore)
 itemRouter.get('/', getFoodItemsByStore)
 itemRouter.post('/', addFoodItem, authAdmin, authStoreVender, authUser)
 itemRouter.patch('/:foodItemId', updateFoodItemById, authAdmin, authStoreVender)
