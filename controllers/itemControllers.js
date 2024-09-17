@@ -31,21 +31,6 @@ const getFoodItemById = async (req, res, next) => {
     }
 };
 
-const getFoodItemsByStore = async (req, res) => {
-    const { storeId } = req.query; // Extract storeId from query parameters
-    
-    try {
-        const foodItems = await FoodItem.find({ storeId }); // Filter by storeId
-        if (foodItems.length === 0) {
-            return res.status(404).json({ message: 'No food items found for this store' });
-        }
-        res.json({ foodItems });
-    } catch (err) {
-        res.status(500).json({ message: 'Error fetching food items', error: err });
-    }
-};
-
-
 const addFoodItem = async (req, res, next) => {
     try {
         
@@ -120,4 +105,4 @@ const searchByItem = async (req, res) => {
   
   
 
-module.exports = { getAllFoodItems, getFoodItemById, addFoodItem, updateFoodItemById, deleteFoodItemById, getFoodItemsByStore, searchByItem };
+module.exports = { getAllFoodItems, getFoodItemById, addFoodItem, updateFoodItemById, deleteFoodItemById, searchByItem };
