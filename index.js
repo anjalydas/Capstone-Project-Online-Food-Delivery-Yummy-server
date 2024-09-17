@@ -10,7 +10,8 @@ const port = process.env.PORT ||3000;
 connectDB();
 const allowedOrigins = [
   'http://localhost:5173',
-  'https://capstone-project-online-food-delivery-yummy-client.vercel.app'
+  'https://capstone-project-online-food-delivery-yummy-client.vercel.app',
+  'https://capstone-project-online-food-delivery-yummy-client-3pkzih1v2.vercel.app/'
 ];
 
 // CORS options configuration
