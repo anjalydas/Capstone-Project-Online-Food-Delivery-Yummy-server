@@ -6,12 +6,15 @@ const  connectDB  = require('./config/db.js');
 const apiRouter = require('./routes/index.js');
 
 const app = express()
-const port = process.env.PORT ||3000;
+const port = process.env.PORT ;
 connectDB();
 app.use(cors(
   {credentials: true,
-  origin: true}
+  origin: process.env.ALLOWED_ORIGIN}
 ))
+const path = require('path');
+app.use('/assets', express.static(path.join(__dirname, 'assets')));
+
 app.use(express.json())
 app.use(cookieParser());
 app.get("/", (req, res, next) => {
