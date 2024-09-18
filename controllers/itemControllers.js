@@ -14,17 +14,27 @@ const getAllFoodItems = async (req, res, next) => {
     }
 };
 
-
 const getFoodItemById = async (req, res, next) => {
     try {
-        const foodItem = await FoodItem.findById(req.params.foodItemId).populate('storeName', 'storeName');  // Populate the store name
-        console.log(foodItem)
+        const { foodItemId } = req.params;
+
+        // Validate the foodItemId
+        if (!foodItemId || foodItemId.length !== 24) {  // Assuming ObjectId format
+            return res.status(400).json({ success: false, message: "Invalid food item ID format" });
+        }
+
+        // Fetch food item by ID
+        const foodItem = await FoodItem.findById(foodItemId);
+
         if (!foodItem) {
             return res.status(404).json({ success: false, message: "Food item not found" });
         }
+
+        // Return the food item
         res.json({ success: true, foodItem });
     } catch (error) {
-        if (error.kind === 'ObjectId') {
+        console.error('Error:', error); // Log error for debugging
+        if (error.name === 'CastError' && error.kind === 'ObjectId') {
             return res.status(400).json({ success: false, message: "Invalid food item ID" });
         }
         res.status(500).json({ message: error.message || "Internal server error" });

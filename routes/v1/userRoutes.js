@@ -14,7 +14,7 @@ userRouter.post('/:sign-up', addUser)
 userRouter.post('/:login', userLogin)
 userRouter.post('/:logout', userLogout, authUser)
 userRouter.post('/:profile/:id', userProfile, authUser)
-userRouter.get('/:check-user/:id', checkUser)
+userRouter.get('/:id', checkUser, authUser, authAdmin, authStoreVender)
 userRouter.patch('/:id', updateAUserById, authAdmin, authUser)
 userRouter.delete('/:id', deleteAUserById, authAdmin, authUser)
 module.exports = userRouter

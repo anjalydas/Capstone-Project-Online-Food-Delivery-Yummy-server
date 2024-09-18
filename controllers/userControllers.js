@@ -15,22 +15,22 @@ catch (error) {
   res.status(error.status || 500).json({ message: error.message ||('Error fetching users')});
 }
 };
-  const getAUserById = async(req, res, next) => {
-        try{
-          const users = await User.findById(req.params._id).exec();
-          if (!users) {
-            return res.status(404).json({ success: false, message: "User not found" });
-        }
-        res.json({ success: true, users });
-      }
-        
-       catch(error){
-        if (error.kind === 'ObjectId') {
-          return res.status(400).json({ success: false, message: "Invalid user ID" });
-      }
-        res.status(404).send('User Not Found')
-       }
+const getAUserById = async (req, res, next) => {
+  try {
+    const user = await User.findById(req.params.id).exec(); // Change _id to id if necessary
+    if (!user) {
+      return res.status(404).json({ success: false, message: "User not found" });
     }
+    res.json({ success: true, user });
+  } catch (error) {
+    if (error.name === 'CastError') { // Check for CastError for invalid ObjectId
+      return res.status(400).json({ success: false, message: "Invalid user ID" });
+    }
+    // Handle other errors if needed
+    res.status(500).json({ success: false, message: "Server Error" });
+  }
+};
+
     const addUser = async(req, res, next) => {
     try{
       
@@ -106,18 +106,21 @@ catch (error) {
         }
     };
     
-    const checkUser = async (req, res, next) => {
-        try {
-            const user = req.user;
+    const checkUser = (req, res, next) => {
+      try {
+          const user = req.user;
+  
+          if (!user) {
+              return res.status(401).json({ success: false, message: "User not authenticated" });
+          }
+  
+          res.json({ success: true, message: "User authenticated" });
+      } catch (error) {
+          res.status(500).json({ success: false, message: "Internal server error", error: error.message });
+      }
+  };
+  
     
-            if (!user) {
-                return res.status(401).json({ success: false, message: "User not authenticated" });
-            }
-            res.json({ success: true, message: "User authenticated" });
-        } catch (error) {
-            res.status(error.status || 500).json({ message: error.message || "Internal server error" });
-        }
-    };
       const updateAUserById =async (req, res, next) => {
        try{
         const user = req.params._id;
