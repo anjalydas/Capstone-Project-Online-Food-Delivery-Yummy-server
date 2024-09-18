@@ -1,6 +1,5 @@
 const express = require('express');
 const v1Router = require('./v1/index.js');
-const itemRouter = require('./v1/itemRoutes.js');
 
 
 const apiRouter = express.Router();
