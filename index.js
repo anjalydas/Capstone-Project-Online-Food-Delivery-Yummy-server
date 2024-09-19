@@ -6,14 +6,27 @@ const  connectDB  = require('./config/db.js');
 const apiRouter = require('./routes/index.js');
 
 const app = express()
-const port = process.env.PORT ;
+const port = process.env.PORT 
 connectDB();
-app.use(cors(
-  {credentials: true,
-  origin: process.env.ALLOWED_ORIGIN}
-))
-const path = require('path');
-app.use('/assets', express.static(path.join(__dirname, 'assets')));
+const allowedOrigins = [
+  'https://capstone-project-online-food-delivery-yummy-client-d5oubtegt.vercel.app',
+  'http://localhost:5173',
+];
+
+const corsOptions = {
+  origin: (origin, callback) => {
+    if (allowedOrigins.indexOf(origin) !== -1 || !origin) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  methods: 'GET,POST,PUT,DELETE',
+  allowedHeaders: 'Content-Type,Authorization',
+};
+
+app.use(cors(corsOptions));
+
 
 app.use(express.json())
 app.use(cookieParser());
