@@ -13,7 +13,7 @@ const authAdmin = (req, res, next) => {
         if (tokenVerified.role !== "admin") {
             return res.status(403).json({ success: false, message: "Access denied. Admins only" });
         }
-        res.json({ success: true, message: "Admin authenticated", user });
+        res.json({ success: true, message: "Admin authenticated", User });
         req.user = tokenVerified;
         next();
     } catch (error) {

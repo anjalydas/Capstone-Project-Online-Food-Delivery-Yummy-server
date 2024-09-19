@@ -5,7 +5,6 @@ const authStoreVender = require('../middlewares/authStoreVender');
 const authUser = require('../middlewares/authUser');
 const itemRouter = express.Router();
 
-
 itemRouter.use(express.json());
 itemRouter.get('/search', searchByItem)
 itemRouter.get('/', getAllFoodItems)
