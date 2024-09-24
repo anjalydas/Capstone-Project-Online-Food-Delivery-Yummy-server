@@ -8,10 +8,11 @@ const apiRouter = require('./routes/index.js');
 const app = express()
 const port = process.env.PORT || 3000; 
 connectDB();
-app.use(cors(
-  {credentials: true,
-    origin: true,}
-))
+app.use(cors({
+  origin: 'https://capstone-project-online-food-delivery-yummy-client.vercel.app', // Replace with your frontend URL
+  methods: ['GET', 'POST', 'PUT', 'DELETE'], // Add methods you want to allow
+  credentials: true // If you need to send cookies or other credentials
+}));
 
 app.use(express.json())
 app.use(cookieParser());
