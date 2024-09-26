@@ -2,68 +2,62 @@ const Cart = require("../model/cartModel.js");
 const Payment = require("../model/paymentModel.js");
 const User = require("../model/userModel.js");
 const crypto = require('crypto');
+const stripe = require("stripe")(process.env.Stripe_Private_Api_Key);
 
-const merchantKey = process.env.PAYU_MERCHANT_KEY;
-const merchantSalt = process.env.PAYU_MERCHANT_SALT;
-const payuURL = "https://secure.payu.in/_payment";
 
-const createPayment = async (req, res) => {
+
+const createPayment = async (req, res, next) => {
     try {
-        const { email, cartId, paymentMethod, amount } = req.body;
-
-        if (!email || !cartId || !paymentMethod || !amount) {
-            return res.status(400).json({ success: false, message: "All fields are required" });
-        }
-
-        const user = await User.findOne({ email });
-        const cart = await Cart.findById(cartId);
-
-        if (!user) {
-            return res.status(404).json({ success: false, message: "User not found" });
-        }
-
-        if (!cart) {
-            return res.status(404).json({ success: false, message: "Cart not found" });
-        }
-
-        const payment = new Payment({
-            email,
-            cartId,
-            paymentMethod,
-            amount,
-            status: 'Pending',
+        const session = await stripe.checkout.sessions.create({
+          payment_method_types: ['card'],
+          line_items: req.body.items.map(item => ({
+            price_data: {
+              currency: 'inr',
+              product_data: {
+                name: item.name,
+              },
+              unit_amount: item.price * 100, // price in smallest currency unit (paise)
+            },
+            quantity: item.quantity,
+          })),
+        
+            mode: "payment",
+            success_url: `${process.env.client_domain}/success`, // Pass session_id to the success URL
+            cancel_url: `${process.env.client_domain}/cancel`,
         });
 
-        await payment.save();
+        res.json({ sessionId: session.id });
+  } catch (error) {
+    console.error('Error creating Stripe session:', error);
+    res.status(500).json({ message: 'Internal Server Error', error: error.message });
+  }
+};
 
-        const txnid = `${Date.now()}`;
-        const productinfo = "Your Product Info";
-        const firstname = user.name;
-        const phone = user.phone;
+const paymentStatus = async (req, res) => {
+    try {
+        const sessionId = req.query.session_id; // Get the session_id from query parameters
+        if (!sessionId) {
+            return res.status(400).json({ message: 'Session ID is required' });
+        }
 
-        const hashString = `${merchantKey}|${txnid}|${amount}|${productinfo}|${firstname}|${user.email}|||||||||||${merchantSalt}`;
-        const hash = crypto.createHash('sha512').update(hashString).digest('hex');
+        const session = await stripe.checkout.sessions.retrieve(sessionId);
 
-        res.status(201).json({
+        // Assuming user ID is stored in the session or passed in some way
+        const userId = session.metadata.userId; // Change this according to how you store user ID
+
+        // Clear the cart for this user (if stored in the database)
+        await Cart.deleteMany({ userId }); // Clear cart items from database (if applicable)
+
+        res.json({
+            message: "Successfully fetched order details and cleared cart",
             success: true,
-            message: "Payment created successfully",
-            payment,
-            payuData: {
-                key: merchantKey,
-                txnid,
-                amount,
-                productinfo,
-                firstname,
-                email: user.email,
-                phone,
-                surl: "http://your-website.com/payment-success",
-                furl: "http://your-website.com/payment-failure",
-                hash,
-                action: payuURL,
-            },
+            data: session
         });
     } catch (error) {
-        res.status(500).json({ success: false, message: "Error creating payment", error: error.message });
+        console.error('Error retrieving payment status:', error);
+        res.status(500).json({ message: 'Internal Server Error', error: error.message });
     }
 };
-module.exports = {createPayment}
+
+
+module.exports = {createPayment, paymentStatus}
