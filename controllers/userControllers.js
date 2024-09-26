@@ -90,24 +90,12 @@ const getAUserById = async (req, res, next) => {
             res.status(error.status || 500).json({ message: error.message || "Login failed" });
         }
     };
-    const userLogout = async (req, res, next) => {
-      try {
-          const token = req.cookies.token;
-          if (!token) {
-              return res.status(400).json({ success: false, message: "Invalid user ID" });
-          }
+    const userLogout = async (req, res) => {
+      res.clearCookie('token');
   
-          res.clearCookie('token', {
-            httpOnly: true,
-            secure: process.env.NODE_ENV === 'production',
-            sameSite: 'Strict',
-        });
-        
-          res.status(200).json({ success: true, message: "User logged out successfully" });
-      } catch (error) {
-          res.status(500).json({ success: false, message: "Logout failed" });
-      }
-  };
+      // Optionally, you can also send a success response
+      return res.status(200).json({ message: 'Logged out successfully' });
+    };
     
     
     const userProfile = async (req, res, next) => {

@@ -11,6 +11,4 @@ const paymentRouter = express.Router();
 paymentRouter.use(express.json());
 
 paymentRouter.post('/', createPayment, authUser)
-paymentRouter.get('/:paymentId', getPaymentDetails, authAdmin, authStoreVender, authUser)
-paymentRouter.patch('/:paymentId', updatePaymentStatus, authAdmin, authStoreVender, authUser)
 module.exports = paymentRouter

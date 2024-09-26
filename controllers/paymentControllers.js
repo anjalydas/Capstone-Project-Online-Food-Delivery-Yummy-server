@@ -1,8 +1,11 @@
 const Cart = require("../model/cartModel.js");
 const Payment = require("../model/paymentModel.js");
 const User = require("../model/userModel.js");
+const crypto = require('crypto');
 
-
+const merchantKey = process.env.PAYU_MERCHANT_KEY;
+const merchantSalt = process.env.PAYU_MERCHANT_SALT;
+const payuURL = "https://secure.payu.in/_payment";
 
 const createPayment = async (req, res) => {
     try {
@@ -12,7 +15,7 @@ const createPayment = async (req, res) => {
             return res.status(400).json({ success: false, message: "All fields are required" });
         }
 
-        const user = await User.findById(email);
+        const user = await User.findOne({ email });
         const cart = await Cart.findById(cartId);
 
         if (!user) {
@@ -28,60 +31,39 @@ const createPayment = async (req, res) => {
             cartId,
             paymentMethod,
             amount,
-            status: 'Pending', 
+            status: 'Pending',
         });
 
         await payment.save();
 
-        res.status(201).json({ success: true, message: "Payment created successfully", payment });
+        const txnid = `${Date.now()}`;
+        const productinfo = "Your Product Info";
+        const firstname = user.name;
+        const phone = user.phone;
+
+        const hashString = `${merchantKey}|${txnid}|${amount}|${productinfo}|${firstname}|${user.email}|||||||||||${merchantSalt}`;
+        const hash = crypto.createHash('sha512').update(hashString).digest('hex');
+
+        res.status(201).json({
+            success: true,
+            message: "Payment created successfully",
+            payment,
+            payuData: {
+                key: merchantKey,
+                txnid,
+                amount,
+                productinfo,
+                firstname,
+                email: user.email,
+                phone,
+                surl: "http://your-website.com/payment-success",
+                furl: "http://your-website.com/payment-failure",
+                hash,
+                action: payuURL,
+            },
+        });
     } catch (error) {
         res.status(500).json({ success: false, message: "Error creating payment", error: error.message });
     }
 };
-
-const updatePaymentStatus = async (req, res) => {
-    try {
-        const { paymentId } = req.params;
-        const { status } = req.body;
-
-        if (!status) {
-            return res.status(400).json({ success: false, message: "Status is required" });
-        }
-
-        const payment = await Payment.findById(paymentId);
-
-        if (!payment) {
-            return res.status(404).json({ success: false, message: "Payment not found" });
-        }
-
-        payment.status = status;
-
-        await payment.save();
-
-        res.json({ success: true, message: "Payment status updated", payment });
-    } catch (error) {
-        res.status(500).json({ success: false, message: "Error updating payment status", error: error.message });
-    }
-};
-
-const getPaymentDetails = async (req, res) => {
-    try {
-        const { paymentId } = req.params;
-
-        const payment = await Payment.findById(paymentId).populate('email', 'name email').populate('cartId');
-
-        if (!payment) {
-            return res.status(404).json({ success: false, message: "Payment not found" });
-        }
-
-        res.json({ success: true, payment });
-    } catch (error) {
-        res.status(500).json({ success: false, message: "Error fetching payment details", error: error.message });
-    }
-};
-
-module.exports = {
-    createPayment,
-    updatePaymentStatus,
-    getPaymentDetails,
-};
+module.exports = {createPayment}
