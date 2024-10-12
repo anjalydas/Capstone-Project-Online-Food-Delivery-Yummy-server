@@ -6,7 +6,7 @@ const  connectDB  = require('./config/db.js');
 const apiRouter = require('./routes/index.js');
 
 const app = express()
-const port = process.env.PORT || 3000; 
+const port = process.env.PORT ; 
 connectDB();
 app.use(cors({
   origin: 'https://capstone-project-online-food-delivery-yummy-client.vercel.app', // Replace with your frontend URL
