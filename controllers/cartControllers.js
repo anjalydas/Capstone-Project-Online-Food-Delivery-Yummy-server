@@ -5,7 +5,7 @@ const { checkUser } = require("./userControllers.js");
 
 const getAllCartItems = async (req, res, next) => {
     try {
-        const cartItems = await User.find({ Cart })
+        const cartItems = await Cart.find({ Cart })
         if (cartItems.length === 0) {
             return res.status(404).json({ success: false, message: "Cart is empty" });
         }
