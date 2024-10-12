@@ -1,6 +1,6 @@
 const express = require('express');
 const jwt = require('jsonwebtoken');
-const { getAllUsers, getAUserById, addUser, updateAUserById, deleteAUserById, userLogin, userLogout, userProfile } = require('../../controllers/userControllers.js');
+const { getAllUsers, getAUserById, addUser, updateAUserById, deleteAUserById, userLogin, userLogout, userProfile, checkUser } = require('../../controllers/userControllers.js');
 const authUser = require('../middlewares/authUser.js');
 const authAdmin = require('../middlewares/authAdmin.js');
 const userRouter = express.Router();
@@ -9,6 +9,7 @@ const userRouter = express.Router();
 
 userRouter.get('/', getAllUsers)
 userRouter.get('/:id', authUser, getAUserById)
+userRouter.get('/check-user', authUser, checkUser)
 userRouter.post('/:sign-up', addUser)
 userRouter.post('/:login', userLogin)
 userRouter.post('/:logout', authUser, userLogout)
