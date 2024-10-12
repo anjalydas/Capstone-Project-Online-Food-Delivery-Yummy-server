@@ -4,12 +4,12 @@ const generateUserToken = require("../utils/generateToken.js");
 
 const getAllUsers = async(req, res, next) => {
   try {
-    const users = await User.find(req.query);
-    if (users.length === 0) {
+    const user = await User.find(req.query);
+    if (user.length === 0) {
       return res.status(404).json({ success: false, message: "No users found" });
       }
 
-  res.json({ success: true, users });
+  res.json({ success: true, user });
       } 
 catch (error) {
   res.status(error.status || 500).json({ message: error.message ||('Error fetching users')});
@@ -45,12 +45,17 @@ const getAUserById = async (req, res, next) => {
         }
         const saltRounds =10;
         const hashedPassword = bcrypt.hashSync(password, saltRounds);
-        const users = new User({ name, email, userId, password: hashedPassword, mobile, profilePic, role });
-        await users.save()
-        const token = generateUserToken(email);
+        const user = new User({ name, email, userId, password: hashedPassword, mobile, profilePic, role });
+        await user.save()
+        const token = generateUserToken(user);
 
-        res.cookie("token", token);
-        res.json({ success: true, message: "User created successfully" , role: users.role });
+        res.cookie("token", token, {
+          httpOnly: true,
+          secure: true,
+          sameSite: 'None',
+          maxAge: 24 * 60 * 60 * 1000  // 1 day expiry
+      });
+        res.json({ success: true, message: "User created successfully" , role: user.role });
       }
         catch (error) {
           res.status(400).send('Error Adding User');
@@ -60,41 +65,65 @@ const getAUserById = async (req, res, next) => {
       const userLogin = async (req, res, next) => {
         try {
             const { email, password } = req.body;
+            
+            // Validate input
             if (!email || !password) {
                 return res.status(400).json({ success: false, message: "All fields required" });
             }
     
+            // Check if user exists
             const userExist = await User.findOne({ email });
-    
+            
             if (!userExist) {
                 return res.status(409).json({ success: false, message: "User does not exist" });
             }
     
+            // Validate password
             const passwordMatch = bcrypt.compareSync(password, userExist.password);
-    
+            
             if (!passwordMatch) {
                 return res.status(400).json({ success: false, message: "User not authenticated" });
             }
     
-            const token = generateUserToken(email);
+            // Generate token
+            const token = generateUserToken(userExist);
     
+            // Set cookie with token
             res.cookie('token', token, {
-            httpOnly: true,
-            secure: process.env.NODE_ENV === 'production',
-            sameSite: 'Strict',
-            maxAge: 24 * 60 * 60 * 1000  // 1 day expiry
-        });
+                httpOnly: true,
+                secure: true,
+                sameSite: 'None',
+                maxAge: 24 * 60 * 60 * 1000 // 1 day expiry
+            });
     
-            res.json({ success: true, message: "user login successfully" });
+            // Return user data along with success message
+            res.json({
+                success: true,
+                message: "User logged in successfully",
+                user: {
+                    _id: userExist._id,
+                    email: userExist.email,
+                    role: userExist.role // Assuming the User model has a role field
+                }
+            });
         } catch (error) {
             res.status(error.status || 500).json({ message: error.message || "Login failed" });
         }
     };
+    
     const userLogout = async (req, res) => {
-      res.clearCookie('token');
-  
-      // Optionally, you can also send a success response
-      return res.status(200).json({ message: 'Logged out successfully' });
+      try {
+        // Clear the token (if using JWT, you can remove it from the client)
+        res.clearCookie("token", {
+          httpOnly: true,
+          secure: true,
+          sameSite: 'None',
+          
+      });  // Assuming you set the JWT in cookies
+        return res.status(200).json({ success: true, message: "Logged out successfully." });
+    } catch (err) {
+        return res.status(500).json({ success: false, message: "Logout failed." });
+    }
     };
     
     
@@ -109,19 +138,6 @@ const getAUserById = async (req, res, next) => {
         }
     };
     
-    const checkUser = (req, res, next) => {
-      try {
-          const user = req.user;
-  
-          if (!user) {
-              return res.status(401).json({ success: false, message: "User not authenticated" });
-          }
-  
-          res.json({ success: true, message: "User authenticated" });
-      } catch (error) {
-          res.status(500).json({ success: false, message: "Internal server error", error: error.message });
-      }
-  };
   
     
       const updateAUserById =async (req, res, next) => {
@@ -145,4 +161,4 @@ const getAUserById = async (req, res, next) => {
         res.send('delete a User by id')
       }
 
-    module.exports = {getAllUsers, getAUserById, addUser, userLogin, userLogout, userProfile, checkUser, updateAUserById, deleteAUserById}
+    module.exports = {getAllUsers, getAUserById, addUser, userLogin, userLogout, userProfile, updateAUserById, deleteAUserById}
