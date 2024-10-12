@@ -101,7 +101,7 @@ const getAUserById = async (req, res, next) => {
                 success: true,
                 message: "User logged in successfully",
                 user: {
-                    _id: userExist._id,
+                    id: userExist.id,
                     email: userExist.email,
                     role: userExist.role // Assuming the User model has a role field
                 }
