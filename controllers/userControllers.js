@@ -160,5 +160,19 @@ const getAUserById = async (req, res, next) => {
       const deleteAUserById = (req, res) => {
         res.send('delete a User by id')
       }
+const checkUser = (req, res, next) => {
+      try {
+          const user = req.user;
+  
+          if (!user) {
+              return res.status(401).json({ success: false, message: "User not authenticated" });
+          }
+  
+          res.json({ success: true, message: "User authenticated" });
+      } catch (error) {
+          res.status(500).json({ success: false, message: "Internal server error", error: error.message });
+      }
+  };
 
-    module.exports = {getAllUsers, getAUserById, addUser, userLogin, userLogout, userProfile, updateAUserById, deleteAUserById}
+const checkUser = (req, res, next) => {
+    module.exports = {getAllUsers, getAUserById, addUser, userLogin, userLogout, userProfile, updateAUserById, deleteAUserById, checkUser }
