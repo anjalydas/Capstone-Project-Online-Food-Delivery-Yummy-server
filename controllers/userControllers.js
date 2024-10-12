@@ -173,6 +173,4 @@ const checkUser = (req, res, next) => {
           res.status(500).json({ success: false, message: "Internal server error", error: error.message });
       }
   };
-
-const checkUser = (req, res, next) => {
     module.exports = {getAllUsers, getAUserById, addUser, userLogin, userLogout, userProfile, updateAUserById, deleteAUserById, checkUser }
