@@ -174,3 +174,5 @@ const getAUserById = async (req, res, next) => {
       }
 
     module.exports = {getAllUsers, getAUserById, addUser, userLogin, userLogout, userProfile, updateAUserById, deleteAUserById}
+
+    

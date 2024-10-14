@@ -9,7 +9,7 @@ const app = express()
 const port = process.env.PORT ; 
 connectDB();
 app.use(cors({
-  origin: 'http://localhost:5173', // Replace with your frontend URL
+  origin: true, 
   methods: ['GET', 'POST', 'PATCH', 'DELETE'], // Add methods you want to allow
   credentials: true // If you need to send cookies or other credentials
 }));
