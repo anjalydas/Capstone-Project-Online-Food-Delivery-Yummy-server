@@ -138,39 +138,40 @@ const getAUserById = async (req, res, next) => {
         }
     };
     
-  
-    
-    const updateAUserById = async (req, res, next) => {
+    const checkUser = (req, res, next) => {
       try {
-          // Log the entire request body for debugging
-          console.log("Request Body:", req.body);
+          const user = req.user;
   
-          const { user, name, email, mobile, profilePic, role } = req.body;
-  
-          // Check if 'user' is provided
           if (!user) {
-              return res.status(400).json({ success: false, message: "User ID is required" });
+              return res.status(401).json({ success: false, message: "User not authenticated" });
           }
   
-          const updateUser = await User.findByIdAndUpdate(user, { name, email, mobile, profilePic, role }, { new: true });
-  
-          if (!updateUser) {
-              return res.status(404).json({ success: false, message: "User not found" });
-          }
-  
-          res.json({ success: true, user: updateUser });
+          res.json({ success: true, message: "User authenticated" });
       } catch (error) {
-          console.error("Error updating user:", error); // Log the error for debugging
-  
-          if (error.kind === 'ObjectId') {
-              return res.status(400).json({ success: false, message: "Invalid user ID" });
-          }
-          res.status(500).json({ success: false, message: "An error occurred while updating the user" });
+          res.status(500).json({ success: false, message: "Internal server error", error: error.message });
       }
   };
   
+    
+      const updateAUserById =async (req, res, next) => {
+       try{
+        const user = req.params._id;
+        const { name, email, mobile, profilePic, role } = req.body;
+        const updateUser = await User.findByIdAndUpdate(user, { name, email, mobile, profilePic, role }, {new:true})
+        if (!updateUser) {
+          return res.status(404).json({ success: false, message: "User not found" });
+      }
+        res.json({ success: true, user: updateUser })
+       }
+       catch{
+        if (error.kind === 'ObjectId') {
+          return res.status(400).json({ success: false, message: "Invalid user ID" });
+      }
+      res.status(500).json({ success: false, message: "An error occurred while updating the user" });
+    }
+      }
       const deleteAUserById = (req, res) => {
         res.send('delete a User by id')
       }
 
-    module.exports = {getAllUsers, getAUserById, addUser, userLogin, userLogout, userProfile, updateAUserById, deleteAUserById}
+    module.exports = {getAllUsers, getAUserById, addUser, userLogin, userLogout, userProfile, checkUser, updateAUserById, deleteAUserById}
