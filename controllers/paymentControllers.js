@@ -22,8 +22,8 @@ const createPayment = async (req, res, next) => {
           })),
         
             mode: "payment",
-            success_url: `${process.env.client_domain}/success`, // Pass session_id to the success URL
-            cancel_url: `${process.env.client_domain}/cancel`,
+            success_url: `https://capstone-project-online-food-delivery-yummy-client.vercel.app/success`, // Pass session_id to the success URL
+            cancel_url: `https://capstone-project-online-food-delivery-yummy-client.vercel.app/cancel`,
         });
 
         res.json({ sessionId: session.id });
