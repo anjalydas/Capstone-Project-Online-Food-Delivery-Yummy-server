@@ -138,19 +138,7 @@ const getAUserById = async (req, res, next) => {
         }
     };
     
-    const checkUser = (req, res, next) => {
-      try {
-          const user = req.user;
-  
-          if (!user) {
-              return res.status(401).json({ success: false, message: "User not authenticated" });
-          }
-  
-          res.json({ success: true, message: "User authenticated" });
-      } catch (error) {
-          res.status(500).json({ success: false, message: "Internal server error", error: error.message });
-      }
-  };
+    
   
     
       const updateAUserById =async (req, res, next) => {
@@ -174,4 +162,4 @@ const getAUserById = async (req, res, next) => {
         res.send('delete a User by id')
       }
 
-    module.exports = {getAllUsers, getAUserById, addUser, userLogin, userLogout, userProfile, checkUser, updateAUserById, deleteAUserById}
+    module.exports = {getAllUsers, getAUserById, addUser, userLogin, userLogout, userProfile, updateAUserById, deleteAUserById}
