@@ -9,8 +9,8 @@ const app = express()
 const port = process.env.PORT || 3000; 
 connectDB();
 app.use(cors({
-  origin: 'https://capstone-project-online-food-delivery-yummy-client.vercel.app', // Replace with your frontend URL
-  methods: ['GET', 'POST', 'PUT', 'DELETE'], // Add methods you want to allow
+  origin: 'http://localhost:5173', // Replace with your frontend URL
+  methods: ['GET', 'POST', 'PATCH', 'DELETE'], // Add methods you want to allow
   credentials: true // If you need to send cookies or other credentials
 }));
 

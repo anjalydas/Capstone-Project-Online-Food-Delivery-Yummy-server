@@ -18,7 +18,7 @@ const createPayment = async (req, res, next) => {
               },
               unit_amount: item.price * 100, // price in smallest currency unit (paise)
             },
-            quantity: item.quantity,
+            quantity: item.quantity|| 1,
           })),
         
             mode: "payment",
@@ -45,8 +45,7 @@ const paymentStatus = async (req, res) => {
         // Assuming user ID is stored in the session or passed in some way
         const userId = session.metadata.userId; // Change this according to how you store user ID
 
-        // Clear the cart for this user (if stored in the database)
-        await Cart.deleteMany({ userId }); // Clear cart items from database (if applicable)
+        await clearCart(userId); 
 
         res.json({
             message: "Successfully fetched order details and cleared cart",
