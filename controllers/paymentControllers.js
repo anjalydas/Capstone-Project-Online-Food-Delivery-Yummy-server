@@ -22,7 +22,7 @@ const createPayment = async (req, res, next) => {
           })),
         
             mode: "payment",
-            success_url: `https://capstone-project-online-food-delivery-yummy-client.vercel.app/success?session_id=${sessionId}`
+            success_url: `https://capstone-project-online-food-delivery-yummy-client.vercel.app/success`
 , // Pass session_id to the success URL
             cancel_url: `https://capstone-project-online-food-delivery-yummy-client.vercel.app/cancel`,
         });
