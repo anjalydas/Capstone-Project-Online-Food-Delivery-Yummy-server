@@ -22,11 +22,12 @@ const createPayment = async (req, res, next) => {
           })),
         
             mode: "payment",
-            success_url: "https://capstone-project-online-food-delivery-yummy-client.vercel.app/success"
-, // Pass session_id to the success URL
-            cancel_url: `https://capstone-project-online-food-delivery-yummy-client.vercel.app/cancel`,
-        });
+             success_url: `https://capstone-project-online-food-delivery-yummy-client.vercel.app/success?session_id={CHECKOUT_SESSION_ID}`, // Use placeholder
+    cancel_url: "https://capstone-project-online-food-delivery-yummy-client.vercel.app/cancel",
+});
 
+// Redirect the user to the Checkout Session URL
+res.redirect(303, session.url);
         res.json({ sessionId: session.id });
   } catch (error) {
     console.error('Error creating Stripe session:', error);
