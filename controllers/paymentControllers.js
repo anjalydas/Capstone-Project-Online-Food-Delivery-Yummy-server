@@ -1,4 +1,4 @@
-const Cart = require("../model/cartModel.js");
+/const Cart = require("../model/cartModel.js");
 const Payment = require("../model/paymentModel.js");
 const User = require("../model/userModel.js");
 const crypto = require('crypto');
@@ -21,8 +21,8 @@ const createPayment = async (req, res, next) => {
             quantity: item.quantity || 1,
         })),
         mode: "payment",
-        success_url: `${process.env.ALLOWED_ORIGIN}/success`,
-        cancel_url: `${process.env.ALLOWED_ORIGIN}/cancel`,
+        success_url: `${process.env.ALLOWED_ORIGIN}/payment/success`,
+        cancel_url: `${process.env.ALLOWED_ORIGIN}/payment/cancel`,
         metadata: {
             userId: req.userId // Add userId to metadata if available
         },
