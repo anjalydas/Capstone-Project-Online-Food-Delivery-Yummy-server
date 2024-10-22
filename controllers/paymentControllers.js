@@ -1,4 +1,4 @@
-/const Cart = require("../model/cartModel.js");
+const Cart = require("../model/cartModel.js");
 const Payment = require("../model/paymentModel.js");
 const User = require("../model/userModel.js");
 const crypto = require('crypto');
