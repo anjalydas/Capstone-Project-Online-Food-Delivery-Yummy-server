@@ -20,7 +20,9 @@ const createPayment = async (req, res, next) => {
             },
             quantity: item.quantity || 1,
         })),
-        
+        mode: "payment",
+        success_url: `${process.env.ALLOWED_ORIGIN}/success`,
+        cancel_url: `${process.env.ALLOWED_ORIGIN}/cancel`,
         metadata: {
             userId: req.userId // Add userId to metadata if available
         },
