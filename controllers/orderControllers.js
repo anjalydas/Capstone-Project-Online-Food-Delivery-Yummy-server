@@ -5,17 +5,17 @@ const User = require("../model/userModel.js");
 // Fetch all orders for a user
 const getAllOrders = async (req, res) => {
     try {
-        const user = req.body;
-
-        // Check if the user exists
-        if (!user) {
-            return res.status(400).json({ success: false, message: "User is not found" });
+        const userId = req.query.userId; // Get userId from query parameters
+        
+        // Check if the userId is provided
+        if (!userId) {
+            return res.status(400).json({ success: false, message: "User ID is required" });
         }
 
-        console.log("Fetching all orders for user:", user._id);  // Log the user ID
+        console.log("Fetching all orders for user:", userId);  // Log the user ID
 
         // Fetch all orders for the user
-        const orders = await Order.find(user)
+        const orders = await Order.find({ user: userId })
             .populate("user", "name email")
             .populate("cartId");
 
@@ -32,11 +32,12 @@ const getAllOrders = async (req, res) => {
     }
 };
 
+
 const createOrder = async (req, res) => {
     const { user, cartId, foodItems, shippingAddress, paymentMethod, totalAmount } = req.body;
   
     // Ensure all required fields are provided
-    if (!user || !cartId || !foodItems || !shippingAddress || !paymentMethod || !totalAmount) {
+    if (!user  || !foodItems || !shippingAddress || !paymentMethod || !totalAmount) {
       return res.status(400).json({ success: false, message: "All required fields must be provided." });
     }
   

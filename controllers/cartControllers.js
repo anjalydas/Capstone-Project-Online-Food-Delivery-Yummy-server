@@ -95,10 +95,25 @@ const removeCartItem = async (req, res, next) => {try {
     res.status(500).json({ success: false, message: "Error removing item from cart", error: error.message });
 }
 };
+const clearCart = async (req, res) => {
+    try {
+        const { userId } = req.body
+        const result = await Cart.deleteMany({ userId });
+        console.log(userId)
+        if (result.deletedCount === 0) {
+            return res.status(404).json({ success: false, message: "Cart is already empty" });
+        }
+
+        res.json({ success: true, message: "Cart cleared successfully" });
+    } catch (error) {
+        res.status(500).json({ success: false, message: "Error clearing cart", error: error.message });
+    }
+};
+
 
 module.exports = {
   getAllCartItems,
   addItemToCart,
   updateCartItemQuantity,
-  removeCartItem
+  removeCartItem, clearCart
 };

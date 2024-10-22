@@ -11,7 +11,6 @@ const orderSchema = new Schema(
     cartId: {
       type: Schema.Types.ObjectId,
       ref: "Cart",
-      required: true,
     },
     foodItems: [
       {

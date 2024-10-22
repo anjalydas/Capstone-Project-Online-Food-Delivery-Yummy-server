@@ -9,7 +9,8 @@ const paymentRouter = express.Router();
 paymentRouter.use(express.json());
 
 paymentRouter.post('/create-checkout-session', createPayment, authUser)
-paymentRouter.post('/session-status', paymentStatus )
+paymentRouter.post('/session-status', paymentStatus,authUser )
+paymentRouter.get('/session-status', paymentStatus, authUser )
 paymentRouter.get('/success', paymentStatus)
 paymentRouter.get('/cancel', paymentStatus)
 module.exports = paymentRouter
